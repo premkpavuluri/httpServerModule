@@ -1,4 +1,4 @@
-const urlParserHandler = (request, response) => {
+const urlParserHandler = (request, response, next) => {
   const { host } = request.headers;
   request.url = new URL(`http://${host}${request.url}`);
 
@@ -12,7 +12,7 @@ const urlParserHandler = (request, response) => {
   queryParams.date = request.timeStamp;
 
   request.url.queryParams = queryParams;
-  return false;
+  return next();
 };
 
 module.exports = { urlParserHandler };

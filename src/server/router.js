@@ -1,5 +1,21 @@
-const createRouter = (handlers) => (req, res) => {
-  return handlers.some(handler => handler(req, res));
+const createNext = handlers => {
+  let index = -1;
+  const callNextHandler = (req, res) => {
+    index++;
+    const currentHandler = handlers[index];
+    if (currentHandler) {
+      currentHandler(req, res, () => callNextHandler(req, res)); // handler invoking
+    }
+  };
+
+  return callNextHandler;
+};
+
+const createRouter = (handlers) => {
+  return (req, res) => {
+    const next = createNext(handlers);
+    next(req, res);
+  };
 };
 
 module.exports = { createRouter };
